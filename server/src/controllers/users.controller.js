@@ -35,11 +35,12 @@ usersController.updateUser = async (req, res) => {
     const fileData = await fsPromises.readFile(filePath);
     const users = JSON.parse(fileData);
 
-    const userIndex = users.findIndex((user) => user.userId === id);
-    users[userIndex].name = 'Nombre modificado con Patch';
+    const userToUpdate = users.findIndex((user) => user.userId === id);
+    userToUpdate.name = req.body.name;
+    userToUpdate.email = req.body.email;
 
     await fsPromises.writeFile(filePath, JSON.stringify(users));
-    res.send(users[userIndex]);
+    res.send(users);
   } catch (error) {
     return res.send('error: ' + error);
   }
@@ -54,9 +55,7 @@ usersController.deleteUser = async (req, res) => {
     const userIndex = users.findIndex((user) => user.userId === id);
     users.splice(userIndex, 1);
     await fsPromises.writeFile(filePath, JSON.stringify(users));
-    res.send(users[userIndex]);
-
-    res.send('User deleted successfully');
+    res.send(users);
   } catch (error) {
     return res.send('error: ' + error);
   }
